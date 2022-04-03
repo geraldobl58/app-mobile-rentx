@@ -59,8 +59,8 @@ export const Name = styled.Text`
 export const Rent = styled.View``
 
 export const Period = styled.Text`
-  font-size: ${RFValue(25)}px;
-  color: ${({ theme }) => theme.colors.title};
+  font-size: ${RFValue(10)}px;
+  color: ${({ theme }) => theme.colors.text_details};
   font-family: ${({ theme }) => theme.fonts.secondary_500};
 
   text-transform: uppercase;
@@ -80,4 +80,16 @@ export const About = styled.Text`
   text-align: justify;
 
   margin-top: 23px;
+  line-height: ${RFValue(25)}px;
+`
+
+export const Accessories = styled.View`
+  width: 100%;
+
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 16px;
 `
