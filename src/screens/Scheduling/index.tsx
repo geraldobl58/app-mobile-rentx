@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StatusBar, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+import { format } from 'date-fns';
+
+import { getPlatformDate } from '../../utils/getPlatformDate';
+
+import { CarDTO } from '../../dtos/CarDTO';
 
 import { useTheme } from 'styled-components'
 
@@ -27,15 +33,36 @@ import {
   Footer
 } from './styles';
 
+type RentalPeriodProps = {
+  startFormatted: string;
+  endFormatted: string;
+}
+
+type CarDetailsProps = {
+  car: CarDTO
+}
+
 export function Scheduling(){
   const [lastSelectedDate, setLastSelectedDate] = useState<DayProps>({} as DayProps);
   const [markedDates, setMarkedDates] = useState<MarkedDateProps>({} as MarkedDateProps);
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriodProps>({} as RentalPeriodProps);
 
   const navigation = useNavigation()
   const theme = useTheme()
 
+  const route = useRoute()
+
+  const { car } = route.params as CarDetailsProps;
+
   function handleConfirmRental() {
-    navigation.navigate('SchedulingDetails')
+    if (!rentalPeriod.startFormatted || !rentalPeriod.endFormatted) {
+      Alert.alert('Selecione um intervalo par alugar.');
+    } else {
+      navigation.navigate('SchedulingDetails', {
+        car,
+        dates: Object.keys(markedDates)
+      })
+    }
   }
 
   function handleBack() {
@@ -56,6 +83,14 @@ export function Scheduling(){
     const interval = generateInterval(start, end)
 
     setMarkedDates(interval);
+
+    const firstDate = Object.keys(interval)[0];
+    const endDate = Object.keys(interval)[Object.keys(interval).length - 1];
+
+    setRentalPeriod({
+      startFormatted: format(getPlatformDate(new Date(firstDate)), 'dd/MM/yyyy'),
+      endFormatted: format(getPlatformDate(new Date(endDate)), 'dd/MM/yyyy')
+    });
   }
 
   return (
@@ -80,14 +115,18 @@ export function Scheduling(){
         <RentalPeriod>
           <DateInfo>
             <DateTitle>De</DateTitle>
-            <DateValue selected={false}>03/04/2022</DateValue>
+            <DateValue selected={!!rentalPeriod.startFormatted}>
+              {rentalPeriod.startFormatted}
+            </DateValue>
           </DateInfo>
         
           <ArrowSvg />
 
           <DateInfo>
             <DateTitle>Até</DateTitle>
-            <DateValue selected={false}>03/04/2022</DateValue>
+            <DateValue selected={!!rentalPeriod.endFormatted}>
+              {rentalPeriod.endFormatted}
+            </DateValue>
           </DateInfo>
         
         </RentalPeriod>
