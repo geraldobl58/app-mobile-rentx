@@ -59,6 +59,7 @@ type RentalPeriodProps = {
 }
 
 export function SchedulingDetails(){
+  const [isLoading, setIsLoading] = useState(false);
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriodProps>({} as RentalPeriodProps)
 
   const navigation = useNavigation()
@@ -71,6 +72,8 @@ export function SchedulingDetails(){
   const rentTotal = Number(dates.length * car.rent.price);
 
   async function handleConfirmRental() {
+    setIsLoading(true);
+
     const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
 
     const unavailable_dates = [
@@ -90,7 +93,10 @@ export function SchedulingDetails(){
       unavailable_dates
     })
       .then(() => navigation.navigate('SchedulingFinish'))
-      .catch(() => Alert.alert('Não foi possível confirmar o agendamento.'));
+      .catch(() => {
+        Alert.alert('Não foi possível confirmar o agendamento.');
+        setIsLoading(false);
+      })
   }
   
   function handleBack() {
@@ -184,6 +190,8 @@ export function SchedulingDetails(){
           title="Alugar agora" 
           color={theme.colors.success}
           onPress={handleConfirmRental} 
+          enabled={!isLoading}
+          loading={isLoading}
         />
       </Footer>
     </Container>
