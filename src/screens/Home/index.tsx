@@ -20,7 +20,7 @@ import { RectButton, PanGestureHandler } from 'react-native-gesture-handler';
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton);
 
 import { Car } from '../../components/Car';
-import { Loading } from '../../components/Loading';
+import { LoadingAnimation } from '../../components/LoadingAnimation';
 
 import { api } from '../../services/api'
 
@@ -122,7 +122,7 @@ export function Home(){
         </HeaderContent>
       </Header>
 
-      {isLoading ? <Loading /> : 
+      {isLoading ? <LoadingAnimation /> : 
         <CarList 
           data={cars}
           keyExtractor={item => item.id}
